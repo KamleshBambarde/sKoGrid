@@ -1,3 +1,5 @@
+__These changes are soon to be merged into the main branch of koGrid. Until it is merged, please use the skogrid-merge branch of [koGrid](https://github.com/ericmbarnard/KoGrid/tree/skogrid-merge) __
+
 #KoGrid : A Knockout DataGrid#
 
 __Contributors:__
