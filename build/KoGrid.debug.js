@@ -2,7 +2,7 @@
 * KoGrid JavaScript Library 
 * Authors:  https://github.com/ericmbarnard/KoGrid/blob/master/README.md 
 * License: MIT (http://www.opensource.org/licenses/mit-license.php) 
-* Compiled At: 21:59:05.01 Wed 08/29/2012 
+* Compiled At: 22:02:06.59 Thu 08/30/2012 
 ***********************************************/ 
 (function(window, undefined){ 
  
@@ -250,8 +250,8 @@ kg.templates.defaultHeaderCellTemplate = function () {
 
     b.append('<div data-bind="click: $data.sort, css: { \'kgSorted\': !$data.noSortVisible() }">');
     b.append('  <span data-bind="text: $data.displayName"></span>');
-    b.append('  <div class="kgSortButtonDown" data-bind="visible: ($data.allowSort() ? ($data.noSortVisible() || $data.sortAscVisible) : $data.allowSort())"></div>');
-    b.append('  <div class="kgSortButtonUp" data-bind="visible: ($data.allowSort() ? ($data.noSortVisible() || $data.sortDescVisible) : $data.allowSort())"></div>');
+    b.append('  <div class="kgSortButtonDown" data-bind="style: { left: $data.leftPosition }, visible: ($data.allowSort() ? ($data.noSortVisible() || $data.sortAscVisible) : $data.allowSort())"></div>');
+    b.append('  <div class="kgSortButtonUp" data-bind="style: { left: $data.leftPosition }, visible: ($data.allowSort() ? ($data.noSortVisible() || $data.sortDescVisible) : $data.allowSort())"></div>');
     b.append('</div>');
     b.append('<div class="kgHeaderGrip" data-bind="visible: $data.allowResize, mouseEvents: { mouseDown:  $data.gripOnMouseDown }"></div>');
     b.append('<div data-bind="visible: $data._filterVisible">');
@@ -706,6 +706,16 @@ kg.Row = function (entity, config, selectionManager) {
         }
     });
     
+    this.leftPosition = ko.computed(function () {
+        var chars = self.displayName.length;
+        var charW = 8; // pixel width of avg character
+        var totalWidth = ko.utils.unwrapObservable(self.width);
+        var leftWidth = (chars * charW) + 10; // add 10 for a little space beside the text
+
+        var offset = Math.min(totalWidth, leftWidth)
+        return offset.toString() + 'px';
+    });
+
     this.sortAscVisible = ko.computed(function () {
         return self.column.sortDirection() === "asc";
     });
@@ -736,8 +746,8 @@ kg.Row = function (entity, config, selectionManager) {
     this.origWidth = 0;
 ﻿    
     this.gripOnMouseUp = function () {
-        document.onmousemove = null;
-        document.onmouseup = null;
+        $(document).off('mousemove');
+        $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
@@ -752,8 +762,8 @@ kg.Row = function (entity, config, selectionManager) {
     this.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width();
-﻿        document.onmousemove = self.onMouseMove;
-﻿        document.onmouseup = self.gripOnMouseUp;
+﻿        $(document).mousemove(self.onMouseMove);
+﻿        $(document).mouseup(self.gripOnMouseUp);
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         return false;
@@ -2076,8 +2086,8 @@ kg.KoGrid = function (options) {
             filterOpen = filterIsOpen(), //register this observable
             maxHeight = self.maxCanvasHeight(),
             vScrollBarIsOpen = (maxHeight > viewportH),
-            hScrollBarIsOpen = (self.viewportDim().outerWidth < self.totalRowWidth())
-        newDim = new kg.Dimension();
+            hScrollBarIsOpen = (self.viewportDim().outerWidth < self.totalRowWidth()),
+            newDim = new kg.Dimension();
 
         newDim.autoFitHeight = true;
         newDim.outerWidth = self.totalRowWidth();
@@ -2420,7 +2430,7 @@ kg.cssBuilder = {
 
         }
 
-        if ($style[0].styleSheet) { // IE
+        if ($style[0].styleSheet && $style[0].styleSheet.cssText !== '') { // IE
             $style[0].styleSheet.cssText = css.toString(" ");
         }
         else {
@@ -3142,7 +3152,6 @@ ko.bindingHandlers['kgCell'] = (function () {
 /*********************************************** 
 * FILE: ..\src\BindingHandlers\kgMouseEvents.js 
 ***********************************************/ 
-<<<<<<< HEAD
 ko.bindingHandlers['mouseEvents'] = (function () {
     return {
         'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -3154,18 +3163,5 @@ ko.bindingHandlers['mouseEvents'] = (function () {
         'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         }
     };
-=======
-ko.bindingHandlers['mouseEvents'] = (function () {
-    return {
-        'init': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var eFuncs = valueAccessor();
-            if (eFuncs.mouseDown) {
-                $(element).mousedown(eFuncs.mouseDown);
-            }
-        },
-        'update': function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        }
-    };
->>>>>>> ericmbarnard/skogrid-merge
 }()); 
 }(window)); 

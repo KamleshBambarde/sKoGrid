@@ -37,6 +37,16 @@
         }
     });
     
+    this.leftPosition = ko.computed(function () {
+        var chars = self.displayName.length;
+        var charW = 8; // pixel width of avg character
+        var totalWidth = ko.utils.unwrapObservable(self.width);
+        var leftWidth = (chars * charW) + 10; // add 10 for a little space beside the text
+
+        var offset = Math.min(totalWidth, leftWidth)
+        return offset.toString() + 'px';
+    });
+
     this.sortAscVisible = ko.computed(function () {
         return self.column.sortDirection() === "asc";
     });
@@ -67,8 +77,8 @@
     this.origWidth = 0;
 ﻿    
     this.gripOnMouseUp = function () {
-        document.onmousemove = null;
-        document.onmouseup = null;
+        $(document).off('mousemove');
+        $(document).off('mouseup');
         document.body.style.cursor = 'default';
         return false;
     };
@@ -83,8 +93,8 @@
     this.gripOnMouseDown = function (event) {
         self.startMousePosition = event.clientX;
         self.origWidth = self.width();
-﻿        document.onmousemove = self.onMouseMove;
-﻿        document.onmouseup = self.gripOnMouseUp;
+﻿        $(document).mousemove(self.onMouseMove);
+﻿        $(document).mouseup(self.gripOnMouseUp);
         document.body.style.cursor = 'col-resize';
         event.target.parentElement.style.cursor = 'col-resize';
         return false;
